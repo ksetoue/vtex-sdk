@@ -6,8 +6,8 @@ plugins {
     `maven-publish`
 }
 
-group = "org.ksetoue"
-version = "1.0-SNAPSHOT"
+group = "ksetoue"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
@@ -33,23 +33,24 @@ application {
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "com.ksetoue"
-            artifactId = "vtex-sdk"
-            version = "1.0.0"
-
-            from(components["java"])
-        }
-    }
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/nazmulidris/color-console")
+            url = uri("https://maven.pkg.github.com/ksetoue/vtex-sdk")
+            credentials {
+                username = System.getenv("GITHUB_PACKAGES_USERID")
+                // Safe to share the password since it is a `read:package` scoped token.
+                password = System.getenv("GITHUB_VTEX_SDK_PUBLISH")
+            }
         }
     }
+    publications {
+        register("gprRelease", MavenPublication::class) {
+            groupId = group.toString()
+            artifactId = artifactId.toString()
+            version = version.toString()
 
-    dependencies {
-        implementation("com.developerlife:color-console:1.0")
+            from(components["java"])
+        }
     }
 }
